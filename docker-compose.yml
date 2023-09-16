@@ -1,0 +1,42 @@
+services:
+  nuxt-app:
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    env_file: .env
+    environment:
+      - DD_ENV=local
+      - DD_AGENT_HOST=datadog
+      - DD_TRACE_AGENT_PORT=8126
+      - DD_LOGS_INJECT=true
+    working_dir: /app
+    # command:
+    #   - yarn dev --host
+    volumes:
+      - .:/app
+    ports:
+      - 3000:3000
+    networks:
+      - service-network
+
+  datadog:
+    image: 'datadog/agent:7.41.1'
+    environment:
+      - DD_API_KEY
+      - DD_LOGS_ENABLED=true
+      - DD_LOGS_CONFIG_CONTAINER_COLLECT_ALL=true
+      - DD_PROCESS_AGENT_ENABLED=true
+      - DD_DOCKER_LABELS_AS_TAGS={"my.custom.label.team":"team"}
+      - DD_TAGS='env:dd101-dev'
+      - DD_HOSTNAME=dd101-dev-host
+      - DD_APM_ENABLED=true
+      - DD_APM_NON_LOCAL_TRAFFIC=true
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - /proc/:/host/proc/:ro
+      - /sys/fs/cgroup/:/host/sys/fs/cgroup:ro
+    networks:
+      - service-network
+
+networks:
+  service-network: {}
