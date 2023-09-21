@@ -1,63 +1,24 @@
 <template>
   <div>
-    {{ posts.length }}
-    <nuxt-link to="/foo">Go to Foo</nuxt-link>
+    {{ foobar.length }}
   </div>
 </template>
-
 <script lang="ts">
-import { Context } from '@nuxt/types';
+import axios from 'axios'
 
-// const resolveAfter = async (_method: Function, _delay: number) => {
-
-//   if(process.client) {
-//     // return new Promise((res, _rej) => {
-//     //   setTimeout(() => {
-//     //     res(method())
-//     //   }, delay)
-//     // })
-//     // return "not available"
-//   } else {
-//     // return import('node:fs').then(mod => {
-//     //   return mod.readFileSync(process.cwd() + "/Dockerfile").toString()
-//     // })
-//     // return (await import("dd-trace")).tracer.trace("fetch", () => {
-//     //   // @ts-ignore
-//     //   return new Promise((res, _rej) => {
-//     //     setTimeout(() => {
-//     //       res(method())
-//     //     }, delay)
-//     //   })
-//     // })
-//   }
-
-// }
-
-export default {
-  name: 'IndexPage',
-  data: () =>{
+export default{
+  name: "IndexPage",
+  data() {
     return {
-      posts: []
-    };
+      foobar: []
+    }
   },
-  async fetch(_context: Context) {
-    this.posts = await fetch('https://api.nuxtjs.dev/posts').then(res =>
-      res.json()
-    )
-
-    console.log('>> Posts', this.posts.length)
-
-    // if(!process.client && context.$tracer) {
-    //   // await context.$tracer("nuxt.asyncData", () => {
-    //   //   // @ts-ignore
-    //   //   setTimeout(() => {}, 1000);
-    //   // })
-    //   console.log(">> Component Fetched!!!")
-    //   await (this.fromFetch.resp = "bar")
-    // } else {
-    //   await (this.fromFetch.resp = "client")
-    // }
-
+  fetchOnServer: false,
+  async fetch() {
+    // @ts-ignore
+    console.log('>> context', this.$context, this.$tracer, this)
+    // @ts-ignore
+    this.foobar = (await axios.get('http://localhost:3000/response.json')).data;
   }
 }
 </script>
